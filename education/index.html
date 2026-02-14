@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Glow Transcribe | AI Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #09090b;
+            --card-bg: rgba(24, 24, 27, 0.9);
+            --primary-glow: #3b82f6;
+            --secondary-glow: #a855f7;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.08) 0%, transparent 50%);
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--text-main);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; min-height: 100vh;
+        }
+
+        .container { width: 100%; max-width: 900px; margin-top: 40px; }
+        .card { 
+            background: var(--card-bg); backdrop-filter: blur(16px);
+            border: 1px solid var(--border); border-radius: 28px;
+            padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        h1 { font-size: 2.2rem; font-weight: 800; background: linear-gradient(to right, #60a5fa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 10px 0; }
+
+        .status-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 8px 16px; border-radius: 99px; border: 1px solid var(--border); margin-bottom: 25px; font-size: 0.85rem; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #52525b; }
+        .status-dot.active { background: #22c55e; box-shadow: 0 0 12px #22c55e; animation: pulse 2s infinite; }
+
+        .box { width: 100%; height: 250px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; overflow-y: auto; color: var(--text-main); font-size: 0.95rem; line-height: 1.6; box-sizing: border-box; }
+        .box:focus { outline: none; border-color: var(--primary-glow); }
+
+        #notes-box { background: rgba(168, 85, 247, 0.02); border-left: 4px solid var(--secondary-glow); height: auto; min-height: 300px; }
+
+        .controls { display: flex; gap: 12px; margin-bottom: 25px; }
+        button { padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; border: none; }
+        .btn-start { background: var(--primary-glow); color: white; }
+        .btn-stop { background: #ef4444; color: white; }
+        .btn-ai { width: 100%; justify-content: center; background: linear-gradient(135deg, var(--primary-glow), var(--secondary-glow)); color: white; padding: 16px; font-size: 1rem; }
+        button:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
+        button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
+
+        /* Markdown rendering colors */
+        #notes-box h1, #notes-box h2 { color: #c084fc; margin-bottom: 10px; }
+        #notes-box li { color: #d4d4d8; margin-bottom: 8px; }
+        #notes-box th { background: rgba(255,255,255,0.05); }
+        
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1>Glow Transcribe</h1>
+        <div class="status-pill">
+            <div class="status-dot" id="status-dot"></div>
+            <span id="status-text">Ready to Sync</span>
+        </div>
+
+        <div class="controls">
+            <button id="startBtn" class="btn-start" onclick="start()">Start Recording</button>
+            <button id="stopBtn" class="btn-stop" onclick="stop()" disabled>Stop</button>
+        </div>
+
+        <h3 style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Transcript Source</h3>
+        <div id="transcript-box" class="box" contenteditable="true" placeholder="Paste external transcript here or speak..."></div>
+
+        <button id="aiBtn" class="btn-ai" onclick="generateNotes()" disabled>✨ Generate AI Insights</button>
+
+        <h3 style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">AI Generated Notes</h3>
+        <div id="notes-box" class="box">AI response will render here...</div>
+    </div>
+</div>
+
+<script>
+    let recognition;
+    let isRecording = false;
+    const transcriptBox = document.getElementById('transcript-box');
+    const notesBox = document.getElementById('notes-box');
+    const statusText = document.getElementById('status-text');
+    const statusDot = document.getElementById('status-dot');
+    const aiBtn = document.getElementById('aiBtn');
+
+    // CRUCIAL: Detects manual typing or pasting to enable the button
+    transcriptBox.addEventListener('input', () => {
+        aiBtn.disabled = transcriptBox.innerText.trim().length < 5;
+    });
+
+    if ('webkitSpeechRecognition' in window) {
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.onresult = (event) => {
+            let text = "";
+            for (let i = 0; i < event.results.length; i++) {
+                text += event.results[i][0].transcript + " ";
+            }
+            transcriptBox.innerText = text;
+            aiBtn.disabled = false;
+        };
+        recognition.onend = () => { if (isRecording) recognition.start(); };
+    }
+
+    function start() {
+        isRecording = true; recognition.start();
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('stopBtn').disabled = false;
+        statusText.innerText = "Syncing Audio...";
+        statusDot.classList.add('active');
+    }
+
+    function stop() {
+        isRecording = false; recognition.stop();
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('stopBtn').disabled = true;
+        statusText.innerText = "Paused";
+        statusDot.classList.remove('active');
+    }
+
+    async function generateNotes() {
+        const text = transcriptBox.innerText;
+        statusText.innerText = "Processing Data...";
+        notesBox.innerHTML = "<div style='color: #a855f7; animation: pulse 1.5s infinite;'>Analyzing through Glow AI...</div>";
+        aiBtn.disabled = true;
+
+        try {
+            const res = await fetch('http://127.0.0.1:3000/generate-notes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ transcript: text })
+            });
+            const data = await res.json();
+            notesBox.innerHTML = marked.parse(data.notes); 
+            statusText.innerText = "Analysis Complete";
+        } catch (e) {
+            notesBox.innerText = "Connection lost. Check server.js";
+            statusText.innerText = "Offline";
+        } finally {
+            aiBtn.disabled = false;
+        }
+    }
+</script>
+</body>
+</html>

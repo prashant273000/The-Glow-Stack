@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tube Scribe | Glow Stack</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* Reusing your Glow Stack CSS logic */
+        :root {
+            --bg: #020617;
+            --edu-blue: #3b82f6;
+            --glass: rgba(15, 23, 42, 0.9);
+            --border: rgba(59, 130, 246, 0.2);
+        }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; padding: 40px; }
+        .card { background: var(--glass); border: 1px solid var(--border); padding: 40px; border-radius: 24px; max-width: 800px; margin: 0 auto; }
+        
+        .input-group { display: flex; gap: 10px; margin: 30px 0; }
+        input { flex: 1; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: white; outline: none; }
+        input:focus { border-color: var(--edu-blue); box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
+        
+        .btn-convert { background: var(--edu-blue); border: none; padding: 15px 30px; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-convert:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); }
+        
+        #output-box { margin-top: 30px; background: rgba(255,255,255,0.02); padding: 30px; border-radius: 16px; border-left: 4px solid var(--edu-blue); min-height: 200px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1 style="margin-top:0;">📺 Tube Scribe</h1>
+        <p style="color: #94a3b8;">Extract logic and roadmaps from YouTube tutorials instantly.</p>
+        
+        <div class="input-group">
+            <input type="text" id="youtubeUrl" placeholder="Paste YouTube Video URL (e.g., https://youtube.com/watch?v=...)">
+            <button class="btn-convert" onclick="convertVideo()">Convert to Notes</button>
+        </div>
+
+        <div id="status-text" style="font-size: 0.8rem; color: #3b82f6;">Ready to process...</div>
+        <div id="output-box">Your AI notes will render here...</div>
+    </div>
+
+    <script>
+        async function convertVideo() {
+            const url = document.getElementById('youtubeUrl').value;
+            const output = document.getElementById('output-box');
+            const status = document.getElementById('status-text');
+
+            if(!url) return alert("Please paste a URL!");
+
+            status.innerText = "Connecting to YouTube API & Processing with Glow AI...";
+            output.innerHTML = "<em>Analyzing video content...</em>";
+
+            try {
+                // Pointing to your same server.js, just a different endpoint
+                const res = await fetch('http://127.0.0.1:3000/youtube-to-notes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ videoUrl: url })
+                });
+
+                const data = await res.json();
+                output.innerHTML = marked.parse(data.notes);
+                status.innerText = "Analysis Complete!";
+            } catch (e) {
+                output.innerText = "Error: Make sure your server is running.";
+                status.innerText = "Connection Failed.";
+            }
+        }
+    </script>
+</body>
+</html>
