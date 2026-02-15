@@ -11,8 +11,6 @@
     
     <link rel="stylesheet" href="index.css">
     
-    <!-- <link rel="icon" type="image/png" href="./logo.png"> -->
-
     <style>
         :root {
             --accent-cyan: #00f3ff;
@@ -32,9 +30,9 @@
         
         /* --- LOGO BLENDING & SIZING FIX --- */
         .logo-img {
-            height: 55px; /* Increased size for Navbar */
+            height: 55px;
             width: auto;
-            mix-blend-mode: screen; /* Removes black background from logo */
+            mix-blend-mode: screen; 
             filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.6));
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -45,9 +43,9 @@
         }
 
         .hero-icon {
-            height: 160px; /* Large Hero Icon */
+            height: 160px;
             width: auto;
-            mix-blend-mode: screen; /* Blends with dark background */
+            mix-blend-mode: screen;
             filter: drop-shadow(0 0 30px rgba(188, 19, 254, 0.7));
             margin-bottom: 25px;
             animation: pulseGlow 3s infinite alternate;
@@ -58,45 +56,9 @@
             to { filter: drop-shadow(0 0 40px rgba(188, 19, 254, 0.9)); transform: translateY(-10px); }
         }
 
-        /* Footer Links */
         .social-links a { color: #a1a1aa; margin: 0 10px; font-size: 1.2rem; transition: color 0.3s; }
         .social-links a:hover { color: #fff; }
-
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #888;
-            padding: 8px 18px;
-            border-radius: 50px;
-            cursor: pointer;
-            margin-left: 15px;
-            font-size: 0.8rem;
-            transition: 0.3s;
-        }
-        .logout-btn:hover {
-            background: rgba(255, 0, 0, 0.1);
-            color: #ff4d4d;
-            border-color: #ff4d4d;
-        }
     </style>
-
-    <script>
-        const storedUser = localStorage.getItem('glowUser');
-        let currentUser = null;
-
-        if (storedUser) {
-            try {
-                currentUser = JSON.parse(storedUser);
-            } catch (e) {
-                console.log("Session error");
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('glowUser');
-            window.location.href = 'login.html';
-        }
-    </script>
 </head>
 <body>
     
@@ -110,7 +72,6 @@
         <div class="nav-links" style="display: flex; align-items: center;">
             <a href="./education/education.html" class="nav-btn edu-glow"><i class="fas fa-graduation-cap"></i> Education Mode</a>
             <a href="./lifestyle/lifestyle.html" class="nav-btn life-glow"><i class="fas fa-bolt"></i> Lifestyle Mode</a>
-            <!-- <button onclick="logout()" class="logout-btn">Logout</button> -->
         </div>
     </nav>
 
@@ -120,8 +81,6 @@
         
         <div class="hero-content">
             <img src="logo.png" alt="Glow Stack Logo" class="hero-icon">
-            
-            <span class="top-badge">Welcome back, <span id="display-name" style="color:white; font-weight:800; text-transform: uppercase;">Student</span></span>
             
             <h1 class="main-title gradient-text">Glow Stack</h1>
             
@@ -200,12 +159,7 @@
     </footer>
 
     <script>
-        // Update Name from LocalStorage
-        if (currentUser && currentUser.name) {
-            document.getElementById('display-name').innerText = currentUser.name;
-        }
-
-        // Mouse Spotlight Effect
+        // Mouse Spotlight Effect for UI Interaction
         const cards = document.querySelectorAll('.glass-card, .feature-card, .motto-glass-box, .nav-btn');
         cards.forEach(card => {
             card.addEventListener('mousemove', e => {
