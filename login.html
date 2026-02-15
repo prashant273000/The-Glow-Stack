@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access | Glow Stack</title>
+    <link rel="icon" type="image/png" href="./logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #050505;
+            --accent: #00f3ff;
+            --purple: #bc13fe;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 50%, rgba(188, 19, 254, 0.1), transparent 60%);
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .auth-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 { font-family: 'Space Grotesk'; margin: 0 0 10px 0; font-size: 2rem; }
+        p { color: #888; margin-top: 0; font-size: 0.9rem; margin-bottom: 30px; }
+
+        /* --- GOOGLE BUTTON --- */
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 20px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1rem;
+        }
+
+        .google-btn i { margin-right: 10px; font-size: 1.2rem; color: #DB4437; }
+        .google-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
+
+        .divider {
+            display: flex; align-items: center; color: #555; margin: 20px 0; font-size: 0.8rem;
+        }
+        .divider::before, .divider::after {
+            content: ""; flex: 1; height: 1px; background: #333;
+        }
+        .divider span { padding: 0 10px; }
+
+        /* --- MANUAL FORM --- */
+        .input-group { text-align: left; margin-bottom: 15px; }
+        label { font-size: 0.75rem; color: #aaa; margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 1px; }
+        
+        input {
+            width: 100%; padding: 12px;
+            background: rgba(0,0,0,0.4); border: 1px solid var(--border);
+            border-radius: 10px; color: white; box-sizing: border-box; transition: 0.3s;
+        }
+        input:focus { outline: none; border-color: var(--accent); }
+
+        .submit-btn {
+            width: 100%; padding: 14px;
+            background: linear-gradient(90deg, var(--accent), var(--purple));
+            color: white; border: none; border-radius: 10px;
+            font-weight: 800; cursor: pointer; transition: 0.3s;
+        }
+        .submit-btn:hover { transform: scale(1.02); }
+
+    </style>
+</head>
+<body>
+
+    <div class="auth-card">
+        <h1>Welcome Back</h1>
+        <p>Access your student dashboard.</p>
+
+        <button class="google-btn" id="google-login-btn">
+            <i class="fab fa-google"></i> Continue with Google
+        </button>
+
+        <div class="divider"><span>OR CONTINUE WITH EMAIL</span></div>
+
+        <form id="manual-login-form">
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Enter username">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="••••••••">
+            </div>
+            <button type="submit" class="submit-btn">LOG IN</button>
+        </form>
+    </div>
+
+    <script type="module">
+        // Import Firebase (Using the official URL for browsers)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // --- YOUR CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAW30TnNiH879HAKW5nEEnIIsth5ngfCtM",
+            authDomain: "glow-stack.firebaseapp.com",
+            projectId: "glow-stack",
+            storageBucket: "glow-stack.firebasestorage.app",
+            messagingSenderId: "555076970858",
+            appId: "1:555076970858:web:cedaeec4e2a3a598f89d13",
+            measurementId: "G-NKJ41WVLW6"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // --- GOOGLE SIGN IN ---
+        const googleBtn = document.getElementById('google-login-btn');
+        
+        googleBtn.addEventListener('click', () => {
+            console.log("Attempting Google Login...");
+            
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    // Success! 
+                    const user = result.user;
+                    console.log("Logged in as:", user.displayName);
+
+                    // Save User Data to Browser Storage
+                    const session = {
+                        name: user.displayName,
+                        email: user.email,
+                        photo: user.photoURL,
+                        isLoggedIn: true
+                    };
+                    localStorage.setItem('glowUser', JSON.stringify(session));
+
+                    // Redirect to Main Page
+                    window.location.href = 'index.html';
+                })
+                .catch((error) => {
+                    console.error("Login Failed:", error);
+                    alert("Google Login Failed: " + error.message);
+                });
+        });
+
+        // --- MANUAL LOGIN (Backup) ---
+        const manualForm = document.getElementById('manual-login-form');
+        
+        manualForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            if(user) {
+                // Save Fake Session
+                const session = { name: user, isLoggedIn: true, photo: null };
+                localStorage.setItem('glowUser', JSON.stringify(session));
+                
+                // Redirect
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+
+</body>
+</html>

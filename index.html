@@ -3,29 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Glow Stack | The Student OS</title>
+    <link rel="icon" type="image/png" href="logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
     <link rel="stylesheet" href="index.css">
     
+    <!-- <link rel="icon" type="image/png" href="./logo.png"> -->
+
     <style>
-        /* INLINE STYLES FOR GRADIENT TITLE */
+        :root {
+            --accent-cyan: #00f3ff;
+            --accent-purple: #bc13fe;
+        }
+
         .gradient-text {
-            background: linear-gradient(90deg, #00f3ff 0%, #bc13fe 100%);
+            background: linear-gradient(90deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            /* Text Shadow for Glow Effect */
             text-shadow: 0 0 30px rgba(188, 19, 254, 0.3);
         }
+        
+        .fa-ul { margin-left: 2.5em; list-style-type: none; }
+        .fa-li { left: -2em; position: absolute; text-align: center; width: 2em; line-height: inherit; }
+        
+        /* --- LOGO BLENDING & SIZING FIX --- */
+        .logo-img {
+            height: 55px; /* Increased size for Navbar */
+            width: auto;
+            mix-blend-mode: screen; /* Removes black background from logo */
+            filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.6));
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .logo-img:hover {
+            transform: scale(1.15) rotate(5deg);
+            filter: drop-shadow(0 0 20px var(--accent-cyan));
+        }
+
+        .hero-icon {
+            height: 160px; /* Large Hero Icon */
+            width: auto;
+            mix-blend-mode: screen; /* Blends with dark background */
+            filter: drop-shadow(0 0 30px rgba(188, 19, 254, 0.7));
+            margin-bottom: 25px;
+            animation: pulseGlow 3s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            from { filter: drop-shadow(0 0 20px rgba(188, 19, 254, 0.5)); transform: translateY(0); }
+            to { filter: drop-shadow(0 0 40px rgba(188, 19, 254, 0.9)); transform: translateY(-10px); }
+        }
+
+        /* Footer Links */
+        .social-links a { color: #a1a1aa; margin: 0 10px; font-size: 1.2rem; transition: color 0.3s; }
+        .social-links a:hover { color: #fff; }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #888;
+            padding: 8px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-left: 15px;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .logout-btn:hover {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
     </style>
+
+    <script>
+        const storedUser = localStorage.getItem('glowUser');
+        let currentUser = null;
+
+        if (storedUser) {
+            try {
+                currentUser = JSON.parse(storedUser);
+            } catch (e) {
+                console.log("Session error");
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('glowUser');
+            window.location.href = 'login.html';
+        }
+    </script>
 </head>
 <body>
+    
     <nav class="glass-nav">
-        <div class="nav-logo">GLOW<span>STACK</span></div>
-        <div class="nav-links">
+        <div class="nav-logo" style="display: flex; align-items: center; gap: 15px;">
+            <img src="logo.png" alt="Glow Stack Logo" class="logo-img">
+            <div style="font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.4rem; letter-spacing: 1px;">
+                GLOW<span style="color: var(--accent-purple);">STACK</span>
+            </div>
+        </div>
+        <div class="nav-links" style="display: flex; align-items: center;">
             <a href="./education/education.html" class="nav-btn edu-glow"><i class="fas fa-graduation-cap"></i> Education Mode</a>
             <a href="./lifestyle/lifestyle.html" class="nav-btn life-glow"><i class="fas fa-bolt"></i> Lifestyle Mode</a>
+            <button onclick="logout()" class="logout-btn">Logout</button>
         </div>
     </nav>
 
@@ -34,7 +119,9 @@
         <div class="hero-glow-2"></div>
         
         <div class="hero-content">
-            <span class="top-badge">Open-Source OS for Students</span>
+            <img src="logo.png" alt="Glow Stack Logo" class="hero-icon">
+            
+            <span class="top-badge">Welcome back, <span id="display-name" style="color:white; font-weight:800; text-transform: uppercase;">Student</span></span>
             
             <h1 class="main-title gradient-text">Glow Stack</h1>
             
@@ -58,21 +145,21 @@
             <div class="problem-grid">
                 <div class="p-group">
                     <h3 class="edu-color"><i class="fas fa-book-open"></i> Academic Problems</h3>
-                    <p class="p-sub">Drowning in complex lectures, unstructured documentation, and fear of asking seniors for help.</p>
+                    <p class="p-sub">Drowning in complex lectures and unstructured documentation.</p>
                     <ul class="styled-list">
-                        <li><i class="fas fa-exclamation-triangle" style="color:#00f3ff;"></i> Let’s be real—staying 100% focused during long lectures is impossible. Students zone out and miss key points.</li>
-                        <li><i class="fas fa-question-circle" style="color:#00f3ff;"></i> Most students struggle to find a clear roadmap, ending up confused by the endless tutorials online.</li>
-                        <li><i class="fas fa-user-lock" style="color:#00f3ff;"></i> Freshers are often too intimidated to approach seniors. They desperately need advice but fear judgment.</li>
+                        <li><i class="fas fa-exclamation-triangle" style="color:var(--accent-cyan); margin-right:8px;"></i> Focus issues during long lectures.</li>
+                        <li><i class="fas fa-question-circle" style="color:var(--accent-cyan); margin-right:8px;"></i> Lack of a clear roadmap.</li>
+                        <li><i class="fas fa-user-lock" style="color:var(--accent-cyan); margin-right:8px;"></i> Difficulty approaching seniors for advice.</li>
                     </ul>
                 </div>
                 
                 <div class="p-group">
                     <h3 class="life-color"><i class="fas fa-heart-pulse"></i> Lifestyle Problems</h3>
-                    <p class="p-sub">Zero confidence in interviews due to lack of grooming, poor posture, and health neglect.</p>
+                    <p class="p-sub">Low confidence due to poor grooming and health neglect.</p>
                     <ul class="styled-list">
-                        <li><i class="fas fa-user-tie" style="color:#bc13fe;"></i> <strong>The Grooming Gap:</strong> Many students feel like they're wearing a "costume" in interviews, leading to low self-assurance.</li>
-                        <li><i class="fas fa-chair" style="color:#bc13fe;"></i> <strong>The Coder’s Posture:</strong> "Tech Neck" and closed-off body language signal low energy to recruiters.</li>
-                        <li><i class="fas fa-battery-quarter" style="color:#bc13fe;"></i> <strong>Health Neglect:</strong> Ignoring health isn't just about looks—it’s about the mental edge required for confidence.</li>
+                        <li><i class="fas fa-user-tie" style="color:var(--accent-purple); margin-right:8px;"></i> Poor self-assurance in interviews.</li>
+                        <li><i class="fas fa-chair" style="color:var(--accent-purple); margin-right:8px;"></i> Body language issues like "Tech Neck".</li>
+                        <li><i class="fas fa-battery-quarter" style="color:var(--accent-purple); margin-right:8px;"></i> Neglecting health affects mental performance.</li>
                     </ul>
                 </div>
             </div>
@@ -80,26 +167,24 @@
 
         <section class="solution-section">
             <h2 class="center-title">How GlowStack Fixes It</h2>
-            <p class="center-sub">We use <strong>Open Innovation</strong> to bridge the gap between your GPA and your Personality.</p>
-            
             <div class="feature-grid">
                 <div class="feature-card edu-border">
-                    <div class="card-icon"><i class="fas fa-laptop-code"></i></div>
+                    <div class="card-icon"><i class="fas fa-laptop-code" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 20px;"></i></div>
                     <h3>For Academics</h3>
                     <ul class="fa-ul">
-                        <li><span class="fa-li"><i class="fas fa-file-audio" style="color:#00f3ff;"></i></span><strong>AI Lecture Notes:</strong> Turn boring audio into summaries.</li>
-                        <li><span class="fa-li"><i class="fas fa-file-code" style="color:#00f3ff;"></i></span><strong>Doc Simplifier:</strong> Understand complex code docs.</li>
-                        <li><span class="fa-li"><i class="fas fa-users" style="color:#00f3ff;"></i></span><strong>Senior Bridge:</strong> An anonymous space to ask seniors.</li>
+                        <li><span class="fa-li"><i class="fas fa-file-audio" style="color:var(--accent-cyan);"></i></span>Lecture audio turned into notes.</li>
+                        <li><span class="fa-li"><i class="fas fa-file-code" style="color:var(--accent-cyan);"></i></span>Simpler code documentation.</li>
+                        <li><span class="fa-li"><i class="fas fa-users" style="color:var(--accent-cyan);"></i></span>AI mentorship for goals.</li>
                     </ul>
                 </div>
 
                 <div class="feature-card life-border">
-                    <div class="card-icon"><i class="fas fa-gem"></i></div>
+                    <div class="card-icon"><i class="fas fa-gem" style="font-size: 2rem; color: var(--accent-purple); margin-bottom: 20px;"></i></div>
                     <h3>For Lifestyle</h3>
                     <ul class="fa-ul">
-                        <li><span class="fa-li"><i class="fas fa-glasses" style="color:#bc13fe;"></i></span><strong>Style Scan:</strong> AI recommendations for hairstyles & specs.</li>
-                        <li><span class="fa-li"><i class="fas fa-magic" style="color:#bc13fe;"></i></span><strong>Glow Check:</strong> Instant acne detection & remedies.</li>
-                        <li><span class="fa-li"><i class="fas fa-medal" style="color:#bc13fe;"></i></span><strong>Confidence Coach:</strong> Tips to improve posture & presence.</li>
+                        <li><span class="fa-li"><i class="fas fa-glasses" style="color:var(--accent-purple);"></i></span>AI style recommendations.</li>
+                        <li><span class="fa-li"><i class="fas fa-magic" style="color:var(--accent-purple);"></i></span>Instant acne remedies.</li>
+                        <li><span class="fa-li"><i class="fas fa-seedling" style="color:var(--accent-purple);"></i></span>Custom diet and workouts.</li>
                     </ul>
                 </div>
             </div>
@@ -107,16 +192,28 @@
     </main>
 
     <footer>
-        <div class="footer-line"></div>
+        <div class="footer-line" style="height: 1px; background: linear-gradient(90deg, transparent, var(--accent-purple), transparent); margin-bottom: 30px;"></div>
         <div class="footer-content">
             <p>&copy; 2026 <strong>Glow Stack Inc.</strong> All Rights Reserved.</p>
-            <p class="footer-sub">Designed with <i class="fas fa-heart" style="color:#bc13fe;"></i> by <strong>Prashant Prabhakar</strong> for the <strong>Open Innovation Hackathon</strong>.</p>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-github"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
+            <p class="footer-sub">Designed with <i class="fas fa-heart" style="color:var(--accent-purple);"></i> by <strong>Prashant Prabhakar</strong></p>
         </div>
     </footer>
+
+    <script>
+        // Update Name from LocalStorage
+        if (currentUser && currentUser.name) {
+            document.getElementById('display-name').innerText = currentUser.name;
+        }
+
+        // Mouse Spotlight Effect
+        const cards = document.querySelectorAll('.glass-card, .feature-card, .motto-glass-box, .nav-btn');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+            });
+        });
+    </script>
 </body>
 </html>

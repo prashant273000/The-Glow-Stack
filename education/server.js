@@ -12,9 +12,9 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
 // --- 1. CONFIGURATION ---
-const GEMINI_KEY = ""; 
-const GROQ_KEY = ""; 
-const TRANSCRIPT_API_KEY = ""; 
+const GEMINI_KEY = "AIzaSyA03Yt0CASsuC-LSuQwIO6ruSRsErf8sio"; 
+const GROQ_KEY = "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"; 
+const TRANSCRIPT_API_KEY = "sk_lgyipcog-61owjeWsw7KfpFRoI1EBWetTPbdLrsqZ5c";
 
 const genAI = new GoogleGenerativeAI(GEMINI_KEY);
 const groq = new Groq({ apiKey: GROQ_KEY }); // Initialized Groq
@@ -22,7 +22,7 @@ const groq = new Groq({ apiKey: GROQ_KEY }); // Initialized Groq
 // Default Model for Education features (From First Code)
 const model = genAI.getGenerativeModel({ 
     model: "gemini-2.5-flash",
-    systemInstruction: "You are the Glow Scribe. You convert raw technical content into structured, student-friendly B.Tech Roadmaps with emojis and clear headings." 
+    systemInstruction: "You are the Glow Scribe. You convert raw technical content into very structured, detailed and student-friendly B.Tech Roadmaps with clear headings." 
 });
 
 // --- 2. LEGENDS DATABASE (Full list from First Code) ---
@@ -134,7 +134,7 @@ app.post('/generate-notes', async (req, res) => {
     const { transcript } = req.body;
     if (!transcript) return res.status(400).json({ notes: "No audio detected." });
     try {
-        const result = await model.generateContent(`Analyze this live lecture and provide bullet points: ${transcript}`);
+        const result = await model.generateContent(`Analyze this live lecture transcript and give me detailed notes: ${transcript}`);
         res.json({ notes: result.response.text() });
     } catch (error) { res.status(500).json({ notes: "Processing failed." }); }
 });
@@ -144,7 +144,7 @@ app.post('/generate-notes', async (req, res) => {
 // ==================================================
 app.post('/simplify-doc', async (req, res) => {
     const { text, mode } = req.body;
-    let instruction = mode === 'eli5' ? "Explain like I'm 10." : "Convert into bullet points.";
+    let instruction = mode === 'eli5' ? "Explain like I'm 10 age" : "Convert into bullet points.";
     try {
         const result = await model.generateContent(`TASK: ${instruction} TEXT: ${text}`);
         res.json({ reply: result.response.text() });

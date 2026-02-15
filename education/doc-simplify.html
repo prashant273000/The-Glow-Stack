@@ -3,27 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glow Stack | Doc Simplifier</title>
+    <link rel="icon" type="image/png" href="../logo.png">
+    <title>Glow Stack | Doc Simplifier Pro</title>
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         :root { 
-            --bg: #050505; 
-            --glass: rgba(255, 255, 255, 0.03); 
+            --bg: #030305; 
+            --glass: rgba(255, 255, 255, 0.02); 
             --border: rgba(255, 255, 255, 0.08);
             --primary: #00f3ff; 
-            --secondary: #7000ff;
+            --secondary: #bc13fe;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
         body { 
             background-color: var(--bg);
             background-image: 
-                radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.05), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(112, 0, 255, 0.05), transparent 25%);
+                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(188, 19, 254, 0.05) 0%, transparent 40%);
             color: white; 
-            font-family: 'Inter', sans-serif; 
+            font-family: var(--font-main); 
             height: 100vh; 
             margin: 0; 
             display: flex; 
@@ -31,224 +36,200 @@
             overflow: hidden; 
         }
 
-        /* --- NAV --- */
+        /* --- NAVIGATION --- */
         nav { 
             padding: 0 2rem; 
-            height: 70px;
-            background: rgba(0,0,0,0.6); 
-            backdrop-filter: blur(10px); 
+            height: 75px;
+            background: rgba(0,0,0,0.4); 
+            backdrop-filter: blur(20px); 
             border-bottom: 1px solid var(--border); 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            z-index: 100;
+            z-index: 1000;
+            flex-shrink: 0;
         }
         .logo { 
             font-weight: 800; 
-            font-size: 1.2rem; 
-            letter-spacing: -0.5px;
-            background: linear-gradient(90deg, var(--primary), white);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.3rem; 
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -1px;
         }
-        .nav-links a { color: #888; text-decoration: none; margin-left: 25px; font-size: 0.9rem; transition: 0.3s; }
+        .logo-img { height: 40px; mix-blend-mode: screen; filter: drop-shadow(0 0 10px var(--primary)); } /* */
+        .logo span { color: var(--primary); }
+
+        .nav-links a { color: #666; text-decoration: none; margin-left: 25px; font-size: 0.85rem; font-weight: 700; }
         .nav-links a:hover, .nav-links a.active { color: white; text-shadow: 0 0 10px var(--primary); }
 
         /* --- WORKSPACE --- */
         .workspace { 
             display: grid; 
-            grid-template-columns: 1fr 1fr; 
+            grid-template-columns: 1fr 1.2fr; 
             flex: 1; 
-            padding: 20px; 
-            gap: 20px; 
-            position: relative;
+            padding: 25px; 
+            gap: 25px; 
+            min-height: 0; 
+            padding-bottom: 110px;
         }
         
-        /* PANES */
         .pane { 
             display: flex; 
             flex-direction: column; 
             background: var(--glass);
             border: 1px solid var(--border);
-            border-radius: 16px;
+            border-radius: 28px;
             overflow: hidden;
-            transition: 0.3s;
+            position: relative;
         }
-        .pane:focus-within { border-color: rgba(0, 243, 255, 0.3); box-shadow: 0 0 30px rgba(0, 243, 255, 0.05); }
+        .pane:hover { border-color: rgba(0, 243, 255, 0.2); background: rgba(255,255,255,0.04); }
 
-        /* HEADERS */
         .pane-header { 
-            padding: 15px 20px; 
-            background: rgba(255, 255, 255, 0.02); 
+            padding: 18px 25px; 
+            background: rgba(255, 255, 255, 0.03); 
             border-bottom: 1px solid var(--border);
             display: flex; 
             justify-content: space-between; 
-            align-items: center; 
+            align-items: center;
+            flex-shrink: 0;
         }
         .pane-title { 
             font-size: 0.75rem; 
             text-transform: uppercase; 
-            letter-spacing: 1.5px; 
+            letter-spacing: 2px; 
             color: #888; 
-            font-weight: 600; 
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-weight: 800;
         }
         
-        .action-btn {
-            background: none;
-            border: none;
-            color: var(--primary);
-            cursor: pointer;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            opacity: 0.7;
-            transition: 0.3s;
-        }
-        .action-btn:hover { opacity: 1; transform: translateY(-1px); }
-
-        /* TEXT AREAS */
+        /* SCROLLABLE AREAS */
         textarea {
             flex: 1;
             background: transparent;
             border: none;
-            padding: 20px;
+            padding: 25px;
             color: #eee;
-            font-family: 'JetBrains Mono', monospace; /* Code font for input */
-            font-size: 0.9rem;
-            line-height: 1.7;
+            font-family: var(--font-code);
+            font-size: 0.95rem;
+            line-height: 1.8;
             resize: none;
             outline: none;
+            overflow-y: auto;
         }
         
         .output-div {
             flex: 1;
-            padding: 20px;
-            color: #ddd;
+            padding: 25px;
+            color: #ccc;
             font-size: 1rem;
-            line-height: 1.8;
+            line-height: 1.9;
             overflow-y: auto;
+            scroll-behavior: smooth;
         }
-        /* Markdown Styling */
-        .output-div h1, .output-div h2, .output-div h3 { color: white; margin-top: 0; }
-        .output-div strong { color: var(--primary); }
-        .output-div ul { padding-left: 20px; }
-        .output-div li { margin-bottom: 8px; }
 
-        /* --- FLOATING DOCK (The Cool Part) --- */
+        /* --- THE DOCK --- */
         .dock-container {
             position: absolute;
-            bottom: 40px;
+            bottom: 35px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 50;
+            z-index: 500;
         }
 
         .dock {
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(16px);
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(25px);
             border: 1px solid rgba(255,255,255,0.15);
-            padding: 8px;
-            border-radius: 20px;
+            padding: 10px;
+            border-radius: 100px;
             display: flex;
-            gap: 8px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            gap: 10px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
         }
 
         .mode-btn {
             background: transparent;
-            border: 1px solid transparent;
-            color: #888;
-            padding: 10px 20px;
-            border-radius: 12px;
+            border: none;
+            color: #666;
+            padding: 12px 24px;
+            border-radius: 100px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 0.85rem;
+            font-weight: 800;
         }
-        
-        .mode-btn:hover { color: white; background: rgba(255,255,255,0.05); }
-        
-        .mode-btn.active { 
-            background: rgba(0, 243, 255, 0.1); 
-            color: var(--primary); 
-            border-color: rgba(0, 243, 255, 0.2);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.05);
-        }
+        .mode-btn.active { background: rgba(0, 243, 255, 0.15); color: var(--primary); }
 
         .run-btn {
             background: linear-gradient(135deg, var(--primary), #0066ff);
             border: none;
             color: #000;
-            padding: 10px 30px;
-            border-radius: 12px;
-            font-weight: 700;
+            padding: 12px 35px;
+            border-radius: 100px;
+            font-weight: 900;
             cursor: pointer;
-            transition: 0.3s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
-        .run-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
-        .run-btn:disabled { filter: grayscale(1); cursor: not-allowed; transform: none; }
+        .run-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 243, 255, 0.4); }
 
-        /* SCROLLBARS */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        /* NEON SCROLLBAR */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
 
+        /* MOBILE OPTIMIZATION */
+        @media (max-width: 850px) {
+            .workspace { grid-template-columns: 1fr; overflow-y: auto; }
+            .pane { height: 450px; }
+            .dock { flex-direction: column; border-radius: 25px; padding: 15px; width: 300px; }
+            .dock-container { bottom: 20px; position: fixed; }
+            .nav-links { display: none; }
+        }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo">GLOW STACK <span style="font-weight:300; opacity:0.6;">SIMPLIFIER</span></div>
+        <div class="logo">
+            <img src="../logo.png" alt="GS" class="logo-img">
+            GLOW<span>STACK</span> PRO
+        </div>
         <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="tube-scribe.html">Tube Scribe</a>
-            <a href="senior-bridge.html">Mentors</a>
+            <a href="../index.html">Mainframe</a>
+            <a href="tube-scribe.html">Tube</a>
             <a href="#" class="active">Simplifier</a>
         </div>
     </nav>
 
     <div class="workspace">
-        
         <div class="pane">
             <div class="pane-header">
-                <div class="pane-title"><i class="fas fa-code"></i> Input Source</div>
-                <div style="display:flex; gap:15px;">
-                    <button class="action-btn" onclick="clearText()" style="color:#ff4444;">Clear <i class="fas fa-trash"></i></button>
-                    <button class="action-btn" onclick="pasteText()">Paste <i class="fas fa-paste"></i></button>
-                </div>
+                <div class="pane-title"><i class="fas fa-terminal"></i> Source Input</div>
+                <button class="action-btn" onclick="clearText()" style="color:#ff4d4d;">PURGE <i class="fas fa-trash-alt"></i></button>
             </div>
-            <textarea id="inputText" placeholder="// Paste complex documentation, research papers, or legal text here..."></textarea>
+            <textarea id="inputText" placeholder="// Feed complex data here for neural breakdown..."></textarea>
         </div>
 
         <div class="pane">
             <div class="pane-header">
-                <div class="pane-title"><i class="fas fa-magic"></i> AI Output</div>
-                <button class="action-btn" id="copyBtn" onclick="copyOutput()">Copy <i class="fas fa-copy"></i></button>
+                <div class="pane-title"><i class="fas fa-microchip" style="color:var(--primary)"></i> Neural Translation</div>
+                <button class="action-btn" id="copyBtn" onclick="copyOutput()">EXTRACT <i class="fas fa-copy"></i></button>
             </div>
             <div id="outputText" class="output-div">
-                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; opacity:0.3;">
-                    <i class="fas fa-lightbulb" style="font-size:3rem; margin-bottom:15px;"></i>
-                    <p>Ready to simplify complex concepts.</p>
+                <div style="text-align:center; margin-top:35%; opacity:0.15;">
+                    <i class="fas fa-project-diagram" style="font-size:4rem; margin-bottom:20px;"></i>
+                    <p style="font-weight: 800; letter-spacing: 5px;">AWAITING SIGNAL</p>
                 </div>
             </div>
         </div>
-
     </div>
 
     <div class="dock-container">
         <div class="dock">
-            <button class="mode-btn active" onclick="setMode('standard', this)">Standard</button>
-            <button class="mode-btn" onclick="setMode('eli5', this)">ELI5 (Simple)</button>
-            <button class="mode-btn" onclick="setMode('bullets', this)">Bullet Points</button>
-            <div style="width:1px; background:rgba(255,255,255,0.1); margin:0 5px;"></div>
+            <button class="mode-btn active" onclick="setMode('standard', this)">NORMAL</button>
+            <button class="mode-btn" onclick="setMode('eli5', this)">ELI5</button>
+            <button class="mode-btn" onclick="setMode('bullets', this)">CORE POINTS</button>
             <button class="run-btn" id="runBtn" onclick="simplify()">
                 <span>SIMPLIFY</span> <i class="fas fa-bolt"></i>
             </button>
@@ -256,9 +237,13 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
     <script>
         let currentMode = 'standard';
+
+        // Auto-save input to LocalStorage
+        const inputField = document.getElementById('inputText');
+        inputField.value = localStorage.getItem('last_draft') || '';
+        inputField.addEventListener('input', () => localStorage.setItem('last_draft', inputField.value));
 
         function setMode(mode, btn) {
             currentMode = mode;
@@ -267,84 +252,52 @@
         }
 
         function clearText() {
-            document.getElementById('inputText').value = '';
-            document.getElementById('inputText').focus();
-        }
-
-        async function pasteText() {
-            try {
-                const text = await navigator.clipboard.readText();
-                document.getElementById('inputText').value = text;
-            } catch (err) {
-                alert("Permission denied. Use Ctrl+V.");
-            }
+            inputField.value = '';
+            localStorage.removeItem('last_draft');
+            inputField.focus();
         }
 
         function copyOutput() {
             const text = document.getElementById('outputText').innerText;
             navigator.clipboard.writeText(text);
-            
-            // Visual Feedback
             const btn = document.getElementById('copyBtn');
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = `Copied <i class="fas fa-check"></i>`;
-            btn.style.color = '#00ff88';
-            setTimeout(() => {
-                btn.innerHTML = originalHTML;
-                btn.style.color = '';
-            }, 2000);
+            btn.innerHTML = `SUCCESS <i class="fas fa-check"></i>`;
+            setTimeout(() => { btn.innerHTML = `EXTRACT <i class="fas fa-copy"></i>`; }, 2000);
         }
 
         async function simplify() {
-            const input = document.getElementById('inputText').value;
+            const input = inputField.value;
             const output = document.getElementById('outputText');
             const btn = document.getElementById('runBtn');
             
-            if (!input.trim()) return alert("Please paste some text first!");
+            if (!input.trim()) return;
 
-            // UI Loading State
             btn.disabled = true;
-            btn.innerHTML = `<span>Thinking...</span> <i class="fas fa-circle-notch fa-spin"></i>`;
+            btn.innerHTML = `<span>PROCESSING...</span> <i class="fas fa-spinner fa-spin"></i>`;
             
             output.innerHTML = `
-                <div style="text-align:center; margin-top:30%;">
-                    <i class="fas fa-dna fa-spin" style="font-size:2rem; color:var(--primary); opacity:0.8;"></i>
-                    <p style="margin-top:15px; color:#666; font-family:'JetBrains Mono'">Analyzing Syntax...</p>
+                <div style="text-align:center; margin-top:35%;">
+                    <i class="fas fa-atom fa-spin" style="font-size:2.5rem; color:var(--primary);"></i>
+                    <p style="margin-top:20px; color:#444; font-family:var(--font-code)">RECONSTRUCTING DATA...</p>
                 </div>
             `;
 
             try {
-                const res = await fetch('http://127.0.0.1:3000/simplify-doc', {
+                const res = await fetch('http://localhost:3000/simplify-doc', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text: input, mode: currentMode })
                 });
 
                 const data = await res.json();
-                
-                // Render with Fade In
                 output.style.opacity = 0;
                 output.innerHTML = marked.parse(data.reply);
-                
-                // Simple fade in animation
-                let op = 0;
-                let timer = setInterval(function () {
-                    if (op >= 1){ clearInterval(timer); }
-                    output.style.opacity = op;
-                    output.style.filter = 'alpha(opacity=' + op * 100 + ")";
-                    op += 0.1;
-                }, 30);
+                output.style.opacity = 1;
 
             } catch (error) {
-                output.innerHTML = `
-                    <div style="color:#ff4444; text-align:center; margin-top:30%;">
-                        <i class="fas fa-exclamation-triangle" style="font-size:2rem; margin-bottom:10px;"></i>
-                        <p>Server Error. Is the backend running?</p>
-                    </div>
-                `;
+                output.innerHTML = `<p style="color:#ff4d4d; text-align:center; margin-top:35%;">LINK CRITICAL FAILURE. SERVER OFFLINE.</p>`;
             }
 
-            // Reset Button
             btn.disabled = false;
             btn.innerHTML = `<span>SIMPLIFY</span> <i class="fas fa-bolt"></i>`;
         }

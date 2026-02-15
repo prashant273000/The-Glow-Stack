@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Legendary Fitness AI | Video Vault</title>
+    <link rel="icon" type="image/png" href="../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -13,6 +14,9 @@
             --accent: #00f3ff;
             --purple: #bc13fe;
             --glass: rgba(255, 255, 255, 0.03);
+            --success: #00ff9d;
+            --warning: #ffbf00;
+            --danger: #ff0055;
         }
 
         body {
@@ -33,7 +37,15 @@
             padding: 40px;
             border-radius: 30px;
             backdrop-filter: blur(20px);
-            margin-bottom: 50px;
+            margin-bottom: 30px;
+        }
+
+        /* Stats Grid for Inputs */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         input, select {
@@ -42,15 +54,42 @@
             color: white;
             padding: 15px;
             border-radius: 12px;
-            margin: 10px;
-            width: 250px;
+            width: 100%;
+            box-sizing: border-box; /* Fixes padding width issues */
+            font-family: inherit;
         }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .full-width { grid-column: 1 / -1; }
 
         .glow-btn {
             background: linear-gradient(135deg, var(--accent), var(--purple));
             border: none; padding: 15px 40px; border-radius: 50px;
             font-weight: 800; cursor: pointer; transition: 0.3s;
+            color: white; font-size: 1rem; margin-top: 10px;
         }
+        
+        .glow-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--purple); }
+
+        /* --- BMI DISPLAY CARD --- */
+        #bmi-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            border: 1px solid var(--accent);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 0 auto 40px auto;
+            max-width: 500px;
+            display: none; /* Hidden initially */
+            animation: fadeIn 0.5s ease;
+        }
+
+        .bmi-score { font-family: 'Space Grotesk'; font-size: 2.5rem; margin: 0; }
+        .bmi-label { font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; color: #888; }
+        .bmi-status { font-weight: 800; padding: 5px 15px; border-radius: 5px; color: #000; display: inline-block; margin-top: 10px;}
 
         /* --- FLOATING VIDEO GRID --- */
         .video-vault {
@@ -76,11 +115,8 @@
         }
 
         .video-wrapper {
-            width: 100%;
-            aspect-ratio: 16/9;
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 15px;
+            width: 100%; aspect-ratio: 16/9;
+            border-radius: 15px; overflow: hidden; margin-bottom: 15px;
         }
 
         .video-card h4 { margin: 10px 0; font-family: 'Space Grotesk'; color: var(--accent); }
@@ -95,7 +131,10 @@
             margin-bottom: 40px;
             display: none;
             text-align: left;
+            line-height: 1.6;
         }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -105,13 +144,30 @@
         <p style="color:#666; margin-bottom: 40px;">Nutrition-Sync Training for B.Tech Legends</p>
 
         <div class="search-area">
-            <input type="text" id="meal" placeholder="What's in the mess menu?">
-            <select id="goal">
-                <option value="Fat Loss">Shred (Fat Loss)</option>
-                <option value="Muscle Gain">Bulk (Muscle)</option>
-                <option value="Maintain">Active (Energy)</option>
-            </select>
-            <button class="glow-btn" onclick="syncVault()">SYNC VAULT</button>
+            <div class="stats-grid">
+                <div class="full-width">
+                    <input type="text" id="mess" placeholder="What's in the mess menu today? (e.g. Aloo Paratha)">
+                </div>
+                
+                <input type="number" id="height" placeholder="Height (cm)">
+                <input type="number" id="weight" placeholder="Weight (kg)">
+                <input type="number" id="age" placeholder="Age">
+                
+                <select id="goal">
+                    <option value="Fat Loss">Shred (Fat Loss)</option>
+                    <option value="Muscle Gain">Bulk (Muscle)</option>
+                    <option value="Maintain">Active (Energy)</option>
+                </select>
+            </div>
+            
+            <button class="glow-btn" onclick="syncVault()">SYNC VAULT & BMI</button>
+        </div>
+
+        <div id="bmi-card">
+            <p class="bmi-label">Your Body Metrics</p>
+            <h2 class="bmi-score" id="bmi-value">0.0</h2>
+            <div id="bmi-status" class="bmi-status">CALCULATING...</div>
+            <p style="font-size: 0.8rem; margin-top: 15px; color: #aaa;" id="bmi-advice"></p>
         </div>
 
         <div id="ai-report"></div>
@@ -122,7 +178,10 @@
 
         <div class="video-vault" id="vault-grid">
             </div>
-    </div>
+        </div>
+        <footer>
+        <p style="text-align:center; color:#555; padding-bottom:20px;">© 2026 Glow Stack Inc. All Rights Reserved.</p>
+    </footer>
 
     <script>
         const vaultGrid = document.getElementById('vault-grid');
@@ -154,27 +213,89 @@
             });
         }
 
-        async function syncVault() {
-            const meal = document.getElementById('meal').value;
-            const goal = document.getElementById('goal').value;
-            if(!meal) return alert("Enter your meal!");
+        function calculateBMI(h, w) {
+            // Height in cm to meters
+            const meters = h / 100;
+            const bmi = (w / (meters * meters)).toFixed(1);
+            
+            let status = "";
+            let color = "";
+            let advice = "";
 
-            // 1. Hit your Groq API in server.js
+            if (bmi < 18.5) {
+                status = "UNDERWEIGHT";
+                color = "var(--warning)";
+                advice = "Focus on a Caloric Surplus (Eat More!)";
+            } else if (bmi >= 18.5 && bmi < 24.9) {
+                status = "LEGENDARY (NORMAL)";
+                color = "var(--success)";
+                advice = "Great balance! Focus on maintenance or muscle quality.";
+            } else if (bmi >= 25 && bmi < 29.9) {
+                status = "OVERWEIGHT";
+                color = "var(--warning)";
+                advice = "Focus on high protein and slight caloric deficit.";
+            } else {
+                status = "OBESE";
+                color = "var(--danger)";
+                advice = "Prioritize cardio and clean eating immediately.";
+            }
+
+            return { bmi, status, color, advice };
+        }
+
+        async function syncVault() {
+            // 1. Get Values
+            const mess = document.getElementById('mess').value;
+            const height = document.getElementById('height').value;
+            const weight = document.getElementById('weight').value;
+            const age = document.getElementById('age').value;
+            const goal = document.getElementById('goal').value;
+
+            if(!mess || !height || !weight) return alert("Please fill in Mess Menu, Height and Weight!");
+
+            // 2. Calculate and Show BMI
+            const bmiData = calculateBMI(height, weight);
+            
+            const bmiCard = document.getElementById('bmi-card');
+            const bmiValue = document.getElementById('bmi-value');
+            const bmiStatus = document.getElementById('bmi-status');
+            const bmiAdvice = document.getElementById('bmi-advice');
+
+            bmiCard.style.display = "block";
+            bmiValue.innerText = bmiData.bmi;
+            bmiStatus.innerText = bmiData.status;
+            bmiStatus.style.backgroundColor = bmiData.color;
+            bmiAdvice.innerText = bmiData.advice;
+
+            // 3. Send Data to API
             try {
                 const res = await fetch('http://localhost:3000/api/legendary-fitness', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messMeal: meal, fitnessGoal: goal })
+                    // Sending new data to your backend
+                    body: JSON.stringify({ 
+                        messMeal: mess, 
+                        fitnessGoal: goal,
+                        userStats: {
+                            height: height,
+                            weight: weight,
+                            age: age,
+                            bmi: bmiData.bmi
+                        }
+                    })
                 });
                 const data = await res.json();
                 
                 document.getElementById('ai-report').style.display = 'block';
                 document.getElementById('ai-report').innerHTML = marked.parse(data.reply);
                 
-                // 2. Filter the "Floating" videos to match the goal
+                // 4. Filter Videos
                 displayVault(goal);
                 
-            } catch(e) { console.log("Server error"); }
+            } catch(e) { 
+                console.log("Server error", e);
+                // Even if server fails, BMI works locally
+            }
         }
 
         // Load all videos initially

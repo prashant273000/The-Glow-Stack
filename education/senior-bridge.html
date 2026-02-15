@@ -2,73 +2,202 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glow Stack | Legends Bridge</title>
+    <link rel="icon" type="image/png" href="../logo.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --bg: #050505; --glass: rgba(255,255,255,0.05); --primary: #00f3ff; }
-        body { background: var(--bg); color: white; font-family: sans-serif; height: 100vh; margin: 0; display: flex; flex-direction: column; }
-        
-        /* NAV */
-        nav { padding: 1rem 2rem; background: rgba(0,0,0,0.8); border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: bold; color: var(--primary); font-size: 1.2rem; }
-        .nav-links a { color: #888; text-decoration: none; margin-left: 20px; }
-        .nav-links a.active { color: white; }
+        :root { 
+            --bg: #050505; 
+            --glass: rgba(255,255,255,0.03); 
+            --primary: #00f3ff; 
+            --accent: #bc13fe;
+            --border: rgba(255, 255, 255, 0.08);
+        }
 
-        /* LAYOUT */
-        .container { display: grid; grid-template-columns: 280px 1fr; flex: 1; overflow: hidden; }
-        
-        /* SIDEBAR */
-        .sidebar { padding: 1rem; border-right: 1px solid #333; overflow-y: auto; background: #0a0a0a; }
-        .cat-title { font-size: 0.7rem; color: #666; text-transform: uppercase; margin: 20px 0 10px 5px; font-weight: bold; }
-        
-        .card { padding: 12px; margin-bottom: 8px; background: var(--glass); border-radius: 8px; cursor: pointer; display: flex; align-items: center; transition: 0.2s; border: 1px solid transparent; }
-        .card:hover { border-color: var(--primary); }
-        .card.active { background: rgba(0,243,255,0.1); border-left: 3px solid var(--primary); }
-        
-        .icon { width: 35px; height: 35px; background: #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px; color: var(--primary); }
-        .info h3 { font-size: 0.9rem; margin: 0; }
-        .info p { font-size: 0.7rem; color: #888; margin: 2px 0 0 0; }
+        body { 
+            background: var(--bg); 
+            color: white; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            height: 100vh; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+        }
 
-        /* CHAT */
-        .chat-area { display: flex; flex-direction: column; background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%); }
-        .header { padding: 1.5rem; border-bottom: 1px solid #333; }
-        .messages { flex: 1; padding: 2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+        /* --- NAVIGATION --- */
+        nav { 
+            padding: 0.8rem 1.5rem; 
+            background: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            z-index: 1000;
+        }
+        .logo { font-family: 'Space Grotesk'; font-weight: bold; color: var(--primary); font-size: 1.1rem; }
+        .logo span { color: white; opacity: 0.6; font-size: 0.8rem; }
         
-        .msg { padding: 12px 18px; border-radius: 12px; max-width: 75%; line-height: 1.5; font-size: 0.95rem; }
-        .ai { align-self: flex-start; background: #222; color: #ddd; border: 1px solid #333; }
-        .user { align-self: flex-end; background: var(--primary); color: #000; font-weight: 500; }
+        .menu-toggle { display: none; background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+
+        /* --- LAYOUT --- */
+        .container { 
+            display: grid; 
+            grid-template-columns: 320px 1fr; 
+            flex: 1; 
+            overflow: hidden; 
+            position: relative;
+        }
         
-        .input-box { padding: 1.5rem; background: rgba(0,0,0,0.5); display: flex; gap: 10px; }
-        input { flex: 1; padding: 12px 20px; border-radius: 50px; border: 1px solid #333; background: #111; color: white; outline: none; }
-        button { padding: 0 25px; border-radius: 50px; border: none; background: var(--primary); font-weight: bold; cursor: pointer; }
+        /* --- SIDEBAR --- */
+        .sidebar { 
+            background: #0a0a0a; 
+            border-right: 1px solid var(--border); 
+            overflow-y: auto; 
+            padding: 1rem;
+            transition: transform 0.3s ease;
+        }
+        .cat-title { 
+            font-size: 0.65rem; 
+            color: #555; 
+            text-transform: uppercase; 
+            margin: 20px 0 10px 5px; 
+            font-weight: 800; 
+            letter-spacing: 1.5px;
+        }
+        
+        .card { 
+            padding: 12px; 
+            margin-bottom: 8px; 
+            background: var(--glass); 
+            border-radius: 12px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            transition: 0.2s; 
+            border: 1px solid transparent; 
+        }
+        .card:hover { border-color: var(--primary); background: rgba(0, 243, 255, 0.05); }
+        .card.active { background: rgba(0,243,255,0.1); border-color: var(--primary); }
+        
+        .icon { 
+            width: 40px; height: 40px; 
+            background: #111; 
+            border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            margin-right: 12px; color: var(--primary); 
+            flex-shrink: 0;
+        }
+        .info h3 { font-size: 0.9rem; margin: 0; font-weight: 700; }
+        .info p { font-size: 0.75rem; color: #666; margin: 2px 0 0 0; }
+
+        /* --- CHAT AREA --- */
+        .chat-area { 
+            display: flex; 
+            flex-direction: column; 
+            background: radial-gradient(circle at center, #111 0%, #000 100%); 
+            position: relative;
+        }
+        .header { 
+            padding: 1rem 1.5rem; 
+            border-bottom: 1px solid var(--border); 
+            background: rgba(0,0,0,0.3);
+        }
+        .header h2 { font-size: 1.1rem; font-family: 'Space Grotesk'; margin: 0; }
+
+        .messages { 
+            flex: 1; 
+            padding: 1.5rem; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 1.2rem; 
+            scroll-behavior: smooth;
+        }
+        
+        .msg { padding: 12px 16px; border-radius: 18px; max-width: 85%; line-height: 1.6; font-size: 0.9rem; }
+        .ai { align-self: flex-start; background: #1a1a1a; color: #eee; border-bottom-left-radius: 4px; border: 1px solid var(--border); }
+        .user { align-self: flex-end; background: var(--primary); color: #000; font-weight: 600; border-bottom-right-radius: 4px; }
+        
+        .input-box { 
+            padding: 1rem; 
+            background: #0a0a0a; 
+            display: flex; 
+            gap: 10px; 
+            border-top: 1px solid var(--border);
+        }
+        input { 
+            flex: 1; 
+            padding: 12px 20px; 
+            border-radius: 100px; 
+            border: 1px solid #222; 
+            background: #151515; 
+            color: white; 
+            outline: none; 
+            font-family: inherit;
+        }
+        input:focus { border-color: var(--primary); }
+        
+        button.send-btn { 
+            width: 45px; height: 45px; 
+            border-radius: 50%; 
+            border: none; 
+            background: var(--primary); 
+            color: #000;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s;
+        }
+        button.send-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--primary); }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 850px) {
+            .menu-toggle { display: block; }
+            .container { grid-template-columns: 1fr; }
+            
+            .sidebar { 
+                position: absolute; 
+                left: 0; top: 0; bottom: 0; 
+                width: 280px; 
+                z-index: 500; 
+                transform: translateX(-100%); 
+                box-shadow: 20px 0 50px rgba(0,0,0,0.8);
+            }
+            .sidebar.open { transform: translateX(0); }
+            
+            .msg { max-width: 90%; font-size: 0.85rem; }
+            .logo span { display: none; }
+        }
+
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo">GLOW STACK <span style="font-size:0.8em; opacity:0.7;">LEGENDS</span></div>
-        <div class="nav-links">
-            <a href="../index.html">Home</a>
-            <a href="./education.html">Education</a>
-            <a href="./tube-scribe.html">Tube Scribe</a>
-            <a href="#" class="active">Mentors</a>
+        <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <div class="logo">GLOW STACK <span>| LEGENDS BRIDGE</span></div>
+        <div style="display: flex; gap: 15px;">
+            <a href="../index.html" style="color: #666; text-decoration: none; font-size: 0.8rem; font-weight: 600;">EXIT</a>
         </div>
     </nav>
 
     <div class="container">
-        <div class="sidebar">
-            <div class="cat-title">Tech Visionaries</div>
+        <div class="sidebar" id="sidebar">
+            <div class="cat-title">Tech Titans</div>
             <div class="card active" onclick="setMentor('sundar', 'Sundar Pichai')">
                 <div class="icon"><i class="fab fa-google"></i></div><div class="info"><h3>Sundar Pichai</h3><p>CEO, Google</p></div>
             </div>
             <div class="card" onclick="setMentor('elon', 'Elon Musk')">
                 <div class="icon"><i class="fas fa-rocket"></i></div><div class="info"><h3>Elon Musk</h3><p>Technoking</p></div>
             </div>
-            <div class="card" onclick="setMentor('jobs', 'Steve Jobs')">
-                <div class="icon"><i class="fab fa-apple"></i></div><div class="info"><h3>Steve Jobs</h3><p>Visionary</p></div>
-            </div>
 
-            <div class="cat-title">IIT Delhi Legends</div>
+            <div class="cat-title">Founders (IIT Delhi)</div>
             <div class="card" onclick="setMentor('ashneer', 'Ashneer Grover')">
                 <div class="icon" style="color:#ff4444;"><i class="fas fa-rupee-sign"></i></div><div class="info"><h3>Ashneer Grover</h3><p>The Blunt Founder</p></div>
             </div>
@@ -76,15 +205,15 @@
                 <div class="icon" style="color:#ff4444;"><i class="fas fa-utensils"></i></div><div class="info"><h3>Deepinder Goyal</h3><p>CEO, Zomato</p></div>
             </div>
 
-            <div class="cat-title">Student Mentors</div>
-            <div class="card" onclick="setMentor('aryan', 'Aryan (IIT Delhi)')">
+            <div class="cat-title">Campus Seniors</div>
+            <div class="card" onclick="setMentor('aryan', 'Aryan (IITD)')">
                 <div class="icon" style="color:#ffcc00;"><i class="fas fa-user-graduate"></i></div><div class="info"><h3>Aryan</h3><p>CSE Senior</p></div>
             </div>
-            <div class="card" onclick="setMentor('riya', 'Riya (IIT Bombay)')">
-                <div class="icon" style="color:#ff00dd;"><i class="fas fa-file-alt"></i></div><div class="info"><h3>Riya</h3><p>Placement Coord</p></div>
+            <div class="card" onclick="setMentor('riya', 'Riya (IITB)')">
+                <div class="icon" style="color:#ff00dd;"><i class="fas fa-file-alt"></i></div><div class="info"><h3>Riya</h3><p>Placement Guru</p></div>
             </div>
 
-            <div class="cat-title">Wellness</div>
+            <div class="cat-title">Support</div>
             <div class="card" onclick="setMentor('aditi', 'Dr. Aditi')">
                 <div class="icon" style="color:#00ff88;"><i class="fas fa-heart"></i></div><div class="info"><h3>Dr. Aditi</h3><p>Counselor</p></div>
             </div>
@@ -96,8 +225,8 @@
                 <div class="msg ai">Namaste. I am Sundar. How can I help you build the future?</div>
             </div>
             <div class="input-box">
-                <input type="text" id="inp" placeholder="Ask for advice..." onkeypress="if(event.key==='Enter') send()">
-                <button onclick="send()">SEND</button>
+                <input type="text" id="inp" placeholder="Type your doubt..." onkeypress="if(event.key==='Enter') send()">
+                <button class="send-btn" onclick="send()"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
@@ -110,8 +239,6 @@
         const greets = {
             'sundar': "Namaste. I am Sundar. How can I help you build the future?",
             'elon': "Mars awaits. What is your question?",
-            'jobs': "Simplicity is the ultimate sophistication. What are you building?",
-            'ratan': "Ethics and trust come first. How can I guide you?",
             'ashneer': "Bhai kya kar raha hai tu? Seedha bol, what is the problem?",
             'deepinder': "Hustle hard. What are you shipping today?",
             'aryan': "Hey! Aryan from IIT Delhi here. Stuck on LeetCode?",
@@ -119,12 +246,17 @@
             'aditi': "Hello dear. Take a deep breath. I am here to listen."
         };
 
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
         function setMentor(id, name) {
             curr = id; hist = [];
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
             event.currentTarget.classList.add('active');
             document.getElementById('m-name').innerText = name;
             document.getElementById('box').innerHTML = `<div class="msg ai">${greets[id] || "Hello."}</div>`;
+            if (window.innerWidth < 850) toggleSidebar();
         }
 
         async function send() {
@@ -138,7 +270,7 @@
             box.scrollTop = box.scrollHeight;
             
             const loadId = `l-${Date.now()}`;
-            box.innerHTML += `<div class="msg ai" id="${loadId}">...</div>`;
+            box.innerHTML += `<div class="msg ai" id="${loadId}"><i class="fas fa-circle-notch fa-spin"></i></div>`;
 
             try {
                 const res = await fetch('http://127.0.0.1:3000/api/senior-chat', {
@@ -150,7 +282,7 @@
                 document.getElementById(loadId).innerHTML = marked.parse(data.reply);
                 hist.push({role: "user", parts: [{text: txt}]}, {role: "model", parts: [{text: data.reply}]});
             } catch(e) {
-                document.getElementById(loadId).innerText = "Server Error.";
+                document.getElementById(loadId).innerText = "Neural Link Error. Check Backend.";
             }
             box.scrollTop = box.scrollHeight;
         }

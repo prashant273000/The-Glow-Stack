@@ -18,12 +18,13 @@ body {
 
 /* --- Animated Glow Background --- */
 .hero {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    padding: 120px 0 60px;
 }
 
 .hero-glow-1 {
@@ -51,8 +52,17 @@ body {
     padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; z-index: 1000;
 }
 
-.nav-logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.4rem; letter-spacing: -1px; }
+.nav-logo { 
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.4rem; letter-spacing: -1px; 
+}
 .nav-logo span { color: var(--primary-blue); }
+
+.logo-img {
+    height: 40px; width: auto;
+    mix-blend-mode: screen; filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.6));
+    object-fit: contain; transition: 0.3s;
+}
 
 .nav-btn {
     text-decoration: none; color: white; font-weight: 600; font-size: 0.85rem;
@@ -63,10 +73,10 @@ body {
 .life-glow:hover { background: var(--primary-purple); box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
 
 /* --- Hero Content --- */
-.hero-content { text-align: center; z-index: 10; padding: 0 20px; }
+.hero-content { text-align: center; z-index: 10; padding: 0 20px; width: 100%; max-width: 900px; }
 .top-badge { text-transform: uppercase; letter-spacing: 4px; font-size: 0.7rem; color: var(--primary-blue); font-weight: 800; margin-bottom: 15px; display: block; }
-.main-title { font-family: 'Space Grotesk', sans-serif; font-size: 5rem; font-weight: 800; margin: 0; letter-spacing: -2px; }
-.tagline { font-size: 1.2rem; color: var(--text-gray); margin: 20px 0 40px; }
+.main-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 800; margin: 0; letter-spacing: -2px; line-height: 1.1; }
+.tagline { font-size: clamp(1rem, 3vw, 1.2rem); color: var(--text-gray); margin: 20px 0 40px; }
 
 .motto-glass-box {
     background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border);
@@ -75,35 +85,95 @@ body {
 
 .motto-label { font-size: 0.65rem; text-transform: uppercase; color: var(--text-gray); letter-spacing: 2px; }
 .motto-text {
-    font-size: 1.6rem; margin: 10px 0 0; font-weight: 800;
+    font-size: clamp(1.2rem, 4vw, 1.6rem); margin: 10px 0 0; font-weight: 800;
     background: linear-gradient(90deg, #60a5fa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.hero-icon {
+    height: 120px; margin-bottom: 20px;
+    mix-blend-mode: screen; filter: drop-shadow(0 0 20px rgba(188, 19, 254, 0.8));
 }
 
 /* --- Content Styling --- */
 .container { max-width: 1100px; margin: 0 auto; padding: 60px 20px; }
-.glass-card { background: rgba(17, 24, 39, 0.5); border: 1px solid var(--glass-border); padding: 50px; border-radius: 32px; backdrop-filter: blur(20px); }
+.glass-card { background: rgba(17, 24, 39, 0.5); border: 1px solid var(--glass-border); padding: clamp(20px, 5vw, 50px); border-radius: 32px; backdrop-filter: blur(20px); }
 
-.section-title h2 { font-size: 2.2rem; margin-bottom: 40px; }
+.section-title h2 { font-size: clamp(1.8rem, 5vw, 2.2rem); margin-bottom: 30px; }
 .accent-line { width: 40px; height: 4px; background: var(--primary-blue); display: block; margin-bottom: 15px; border-radius: 2px; }
 
-.problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; }
+.problem-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 30px; }
 .edu-color { color: var(--primary-blue); margin-bottom: 10px; }
 .life-color { color: var(--primary-purple); margin-bottom: 10px; }
 
-.styled-list { padding-left: 20px; color: var(--text-gray); }
-.styled-list li { margin-bottom: 15px; font-size: 0.95rem; }
+.styled-list { padding-left: 20px; color: var(--text-gray); list-style: none; }
+.styled-list li { margin-bottom: 15px; font-size: 0.95rem; position: relative; }
 
 /* --- Features --- */
-.center-title { text-align: center; font-size: 2.5rem; margin: 80px 0 10px; }
+.center-title { text-align: center; font-size: clamp(2rem, 6vw, 2.5rem); margin: 80px 0 10px; }
 .center-sub { text-align: center; color: var(--text-gray); margin-bottom: 50px; }
 
-.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-.feature-card { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); padding: 40px; border-radius: 24px; }
-.feature-card h3 { margin-bottom: 20px; }
-.feature-card li { margin-bottom: 12px; color: var(--text-gray); }
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+.feature-card { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); padding: 40px; border-radius: 24px; height: 100%; }
 
 .edu-border:hover { border-color: var(--primary-blue); box-shadow: 0 0 30px rgba(59, 130, 246, 0.1); }
 .life-border:hover { border-color: var(--primary-purple); box-shadow: 0 0 30px rgba(168, 85, 247, 0.1); }
 
-footer { text-align: center; padding: 100px 20px; color: var(--text-gray); }
+footer { text-align: center; padding: 60px 20px; color: var(--text-gray); }
 .footer-line { width: 40px; height: 1px; background: var(--glass-border); margin: 0 auto 20px; }
+
+/* --- SPOTLIGHT POINTER EFFECT --- */
+.glass-card, .feature-card, .motto-glass-box, .nav-btn { position: relative; overflow: hidden; }
+
+.glass-card::before, .feature-card::before, .motto-glass-box::before, .nav-btn::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
+    opacity: 0; z-index: 2; transition: opacity 0.5s ease; pointer-events: none;
+}
+
+.glass-card:hover::before, .feature-card:hover::before, .motto-glass-box:hover::before, .nav-btn:hover::before { opacity: 1; }
+
+/* --- MOBILE RESPONSIVENESS FIXES --- */
+@media (max-width: 768px) {
+    .glass-nav {
+        width: 95%;
+        padding: 10px 15px;
+        top: 10px;
+        border-radius: 25px;
+        flex-direction: column;
+        gap: 12px;
+        height: auto;
+    }
+
+    .nav-logo { font-size: 1.1rem; }
+    .logo-img { height: 30px; }
+
+    .nav-links {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .nav-btn {
+        margin-left: 0;
+        padding: 8px 12px;
+        font-size: 0.75rem;
+        flex: 1;
+        text-align: center;
+    }
+
+    .hero { padding-top: 160px; } /* Prevent navbar from covering content */
+
+    .motto-glass-box { padding: 20px; }
+    
+    .problem-grid, .feature-grid {
+        grid-template-columns: 1fr; /* Force 1 column on mobile */
+    }
+
+    .container { padding: 40px 15px; }
+}
+
+@media (max-width: 480px) {
+    .main-title { font-size: 2.2rem; }
+    .hero-icon { height: 80px; }
+}
