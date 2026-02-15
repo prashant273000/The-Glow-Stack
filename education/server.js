@@ -2,7 +2,8 @@ const express = require('express');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const Groq = require("groq-sdk"); // Integrated from second code
 const cors = require('cors');
-require('dotenv').config();
+const path = require('path'); // Added for path resolving
+require('dotenv').config({ path: path.join(__dirname, '.env') }); // Added explicit path to .env
 
 const app = express();
 
@@ -22,7 +23,7 @@ const groq = new Groq({ apiKey: GROQ_KEY }); // Initialized Groq
 
 // Default Model for Education features (From First Code)
 const model = genAI.getGenerativeModel({ 
-    model: "gemini-2.5-flash",
+    model: "gemini-1.5-flash", // Updated to valid model name
     systemInstruction: "You are the Glow Scribe. You convert raw technical content into very structured, detailed and student-friendly B.Tech Roadmaps with clear headings." 
 });
 
@@ -119,7 +120,7 @@ app.post('/api/senior-chat', async (req, res) => {
     if (!persona) return res.status(404).json({ reply: "Mentor not found." });
     try {
         const seniorModel = genAI.getGenerativeModel({ 
-            model: "gemini-2.5-flash",
+            model: "gemini-1.5-flash", // Updated to valid model name
             systemInstruction: `IDENTITY: ${persona.context} TONE: Persona-accurate. CONSTRAINTS: Short.`
         });
         const chat = seniorModel.startChat({ history: Array.isArray(history) ? history : [] });
@@ -175,7 +176,7 @@ app.post('/api/style-advice', async (req, res) => {
 app.post('/api/analyze-style', async (req, res) => {
     const { image, mode } = req.body;
     try {
-        const visionModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        const visionModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); // Updated to valid model name
         const prompts = {
             hair: "Analyze this face shape. Suggest 3 specific hairstyles that suit this person. Mention why.",
             skin: "Look at this person's skin. Detect any visible acne or dark circles. Suggest 2 cheap home remedies.",
